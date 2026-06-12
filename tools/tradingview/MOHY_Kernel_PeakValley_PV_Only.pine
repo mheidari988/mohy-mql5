@@ -1,0 +1,348 @@
+//@version=5
+indicator("MOHY Kernel Peak/Valley (P/V Only)", shorttitle="MOHY PV", overlay=true, scale=scale.none, max_labels_count=500, max_bars_back=5000, dynamic_requests=true)
+
+// Select timeframe by switching chart timeframe in TradingView.
+swingLeftBars = input.int(1, "SwingLeftBars", minval=1)
+swingRightBars = input.int(1, "SwingRightBars", minval=1)
+includeProvisionalLatest = input.bool(true, "Include Provisional Latest")
+lookbackBars = input.int(600, "Lookback Bars", minval=50, maxval=5000)
+peakLabelTextInput = input.string("P", "Peak Label Text")
+valleyLabelTextInput = input.string("V", "Valley Label Text")
+peakLabelColorInput = input.color(color.black, "Peak Label Color")
+valleyLabelColorInput = input.color(color.black, "Valley Label Color")
+labelSizeInput = input.string("Tiny", "Label Size", options=["Tiny", "Small", "Normal", "Large", "Huge"])
+
+var float EPS = 1e-10
+
+var bool[] g_dualOrderResolvedByBar = array.new_bool()
+var bool[] g_dualFirstHighByBar = array.new_bool()
+
+var bool[] g_pointIsHigh = array.new_bool()
+var bool[] g_pointConfirmed = array.new_bool()
+var int[] g_pointShift = array.new_int()
+var float[] g_pointPrice = array.new_float()
+
+var label[] g_labels = array.new_label()
+
+f_resolve_label_size(string sizeName) =>
+    sizeName == "Tiny" ? size.tiny :
+     sizeName == "Small" ? size.small :
+     sizeName == "Large" ? size.large :
+     sizeName == "Huge" ? size.huge : size.normal
+
+f_resolve_lower_timeframe() =>
+    int seconds = timeframe.in_seconds()
+    string lowerTf = ""
+    if seconds == 86400
+        lowerTf := "240"
+    else if seconds == 14400
+        lowerTf := "60"
+    else if seconds == 7200
+        lowerTf := "30"
+    else if seconds == 3600
+        lowerTf := "15"
+    lowerTf
+
+f_resolve_dual_order_current_bar(float highPrice, float lowPrice) =>
+    bool resolved = false
+    bool firstIsHigh = false
+    string lowerTf = f_resolve_lower_timeframe()
+
+    if highPrice > 0.0 and lowPrice > 0.0 and str.length(lowerTf) > 0
+        float[] lowerHigh = request.security_lower_tf(syminfo.tickerid, lowerTf, high)
+        float[] lowerLow = request.security_lower_tf(syminfo.tickerid, lowerTf, low)
+        float[] lowerOpen = request.security_lower_tf(syminfo.tickerid, lowerTf, open)
+        float[] lowerClose = request.security_lower_tf(syminfo.tickerid, lowerTf, close)
+
+        int sz = array.size(lowerHigh)
+        bool foundHigh = false
+        bool foundLow = false
+        int firstHighIdx = na
+        int firstLowIdx = na
+
+        if sz > 0
+            for i = 0 to sz - 1
+                float lh = array.get(lowerHigh, i)
+                float ll = array.get(lowerLow, i)
+                bool hitHigh = lh >= highPrice - EPS
+                bool hitLow = ll <= lowPrice + EPS
+
+                if hitHigh and not foundHigh
+                    foundHigh := true
+                    firstHighIdx := i
+                if hitLow and not foundLow
+                    foundLow := true
+                    firstLowIdx := i
+
+                if foundHigh and foundLow
+                    if firstHighIdx != firstLowIdx
+                        firstIsHigh := firstHighIdx < firstLowIdx
+                    else
+                        float lo = array.get(lowerOpen, i)
+                        float lc = array.get(lowerClose, i)
+                        firstIsHigh := lc < lo
+                    resolved := true
+                    break
+
+    [resolved, firstIsHigh]
+
+f_has_bar(int shift) =>
+    shift >= 0 and shift <= bar_index and not na(time[shift])
+
+f_is_swing_high(int shift) =>
+    bool ok = f_has_bar(shift)
+    float pivot = ok ? high[shift] : na
+    if ok
+        ok := pivot > 0.0
+
+    if ok
+        for i = 1 to swingLeftBars
+            int leftShift = shift + i
+            if not f_has_bar(leftShift)
+                ok := false
+                break
+            if high[leftShift] >= pivot
+                ok := false
+                break
+
+    if ok
+        for i = 1 to swingRightBars
+            int rightShift = shift - i
+            if not f_has_bar(rightShift)
+                ok := false
+                break
+            if high[rightShift] > pivot
+                ok := false
+                break
+
+    ok
+
+f_is_swing_low(int shift) =>
+    bool ok = f_has_bar(shift)
+    float pivot = ok ? low[shift] : na
+    if ok
+        ok := pivot > 0.0
+
+    if ok
+        for i = 1 to swingLeftBars
+            int leftShift = shift + i
+            if not f_has_bar(leftShift)
+                ok := false
+                break
+            if low[leftShift] <= pivot
+                ok := false
+                break
+
+    if ok
+        for i = 1 to swingRightBars
+            int rightShift = shift - i
+            if not f_has_bar(rightShift)
+                ok := false
+                break
+            if low[rightShift] < pivot
+                ok := false
+                break
+
+    ok
+
+f_is_provisional_swing_high(int shift) =>
+    bool ok = f_has_bar(shift)
+    float pivot = ok ? high[shift] : na
+    if ok
+        ok := pivot > 0.0
+
+    if ok
+        for i = 1 to swingLeftBars
+            int leftShift = shift + i
+            if not f_has_bar(leftShift)
+                ok := false
+                break
+            if high[leftShift] >= pivot
+                ok := false
+                break
+
+    if ok
+        for i = 1 to swingRightBars
+            int rightShift = shift - i
+            if rightShift < 0
+                break
+            if not f_has_bar(rightShift)
+                break
+            if high[rightShift] > pivot
+                ok := false
+                break
+
+    ok
+
+f_is_provisional_swing_low(int shift) =>
+    bool ok = f_has_bar(shift)
+    float pivot = ok ? low[shift] : na
+    if ok
+        ok := pivot > 0.0
+
+    if ok
+        for i = 1 to swingLeftBars
+            int leftShift = shift + i
+            if not f_has_bar(leftShift)
+                ok := false
+                break
+            if low[leftShift] <= pivot
+                ok := false
+                break
+
+    if ok
+        for i = 1 to swingRightBars
+            int rightShift = shift - i
+            if rightShift < 0
+                break
+            if not f_has_bar(rightShift)
+                break
+            if low[rightShift] < pivot
+                ok := false
+                break
+
+    ok
+
+f_clear_points() =>
+    array.clear(g_pointIsHigh)
+    array.clear(g_pointConfirmed)
+    array.clear(g_pointShift)
+    array.clear(g_pointPrice)
+
+f_append_point(bool isHigh, bool confirmed, int shift, float price) =>
+    array.push(g_pointIsHigh, isHigh)
+    array.push(g_pointConfirmed, confirmed)
+    array.push(g_pointShift, shift)
+    array.push(g_pointPrice, price)
+
+f_upsert_alternating_point(bool isHigh, bool confirmed, int shift, float price) =>
+    int n = array.size(g_pointShift)
+    if n <= 0
+        f_append_point(isHigh, confirmed, shift, price)
+    else
+        bool latestIsHigh = array.get(g_pointIsHigh, n - 1)
+        if latestIsHigh != isHigh
+            f_append_point(isHigh, confirmed, shift, price)
+        else
+            float latestPrice = array.get(g_pointPrice, n - 1)
+            int latestShift = array.get(g_pointShift, n - 1)
+            bool shouldReplace = false
+            if isHigh
+                shouldReplace := (price > latestPrice + EPS) or (math.abs(price - latestPrice) <= EPS and shift < latestShift)
+            else
+                shouldReplace := (price < latestPrice - EPS) or (math.abs(price - latestPrice) <= EPS and shift < latestShift)
+
+            if shouldReplace
+                array.set(g_pointIsHigh, n - 1, isHigh)
+                array.set(g_pointConfirmed, n - 1, confirmed)
+                array.set(g_pointShift, n - 1, shift)
+                array.set(g_pointPrice, n - 1, price)
+
+f_dual_first_is_high(int shift) =>
+    bool firstIsHigh = false
+    if f_has_bar(shift)
+        firstIsHigh := close[shift] < open[shift]
+    int pivotBarIndex = bar_index - shift
+    int n = array.size(g_dualOrderResolvedByBar)
+    if pivotBarIndex >= 0 and pivotBarIndex < n
+        bool resolved = array.get(g_dualOrderResolvedByBar, pivotBarIndex)
+        if resolved
+            firstIsHigh := array.get(g_dualFirstHighByBar, pivotBarIndex)
+    firstIsHigh
+
+f_build_points() =>
+    f_clear_points()
+    int bars = bar_index + 1
+    if bars > swingRightBars + 2
+        int fromShift = swingRightBars + 1
+        int maxShift = math.min(lookbackBars, bars - swingRightBars - 2)
+        if maxShift >= fromShift
+            int startShift = math.max(fromShift, swingRightBars + 1)
+            int confirmedIterCount = maxShift - startShift
+            for idx = 0 to confirmedIterCount
+                int shift = maxShift - idx
+                bool hasHigh = f_is_swing_high(shift)
+                bool hasLow = f_is_swing_low(shift)
+                if not hasHigh and not hasLow
+                    continue
+
+                float highPrice = hasHigh ? high[shift] : 0.0
+                float lowPrice = hasLow ? low[shift] : 0.0
+
+                if hasHigh and hasLow
+                    bool firstIsHigh = f_dual_first_is_high(shift)
+                    if firstIsHigh
+                        f_upsert_alternating_point(true, true, shift, highPrice)
+                        f_upsert_alternating_point(false, true, shift, lowPrice)
+                    else
+                        f_upsert_alternating_point(false, true, shift, lowPrice)
+                        f_upsert_alternating_point(true, true, shift, highPrice)
+                else
+                    f_upsert_alternating_point(hasHigh, true, shift, hasHigh ? highPrice : lowPrice)
+
+            if includeProvisionalLatest and bars > swingLeftBars + 1
+                int oldestProvisionalShift = math.min(swingRightBars, bars - swingLeftBars - 1)
+                int provisionalIterCount = oldestProvisionalShift
+                for idx = 0 to provisionalIterCount
+                    int shift = oldestProvisionalShift - idx
+                    bool hasHigh = f_is_provisional_swing_high(shift)
+                    bool hasLow = f_is_provisional_swing_low(shift)
+                    if not hasHigh and not hasLow
+                        continue
+
+                    float highPrice = hasHigh ? high[shift] : 0.0
+                    float lowPrice = hasLow ? low[shift] : 0.0
+
+                    if hasHigh and hasLow
+                        bool firstIsHigh = f_dual_first_is_high(shift)
+                        if firstIsHigh
+                            f_upsert_alternating_point(true, false, shift, highPrice)
+                            f_upsert_alternating_point(false, false, shift, lowPrice)
+                        else
+                            f_upsert_alternating_point(false, false, shift, lowPrice)
+                            f_upsert_alternating_point(true, false, shift, highPrice)
+                    else
+                        f_upsert_alternating_point(hasHigh, false, shift, hasHigh ? highPrice : lowPrice)
+
+[resolvedNow, firstHighNow] = f_resolve_dual_order_current_bar(high, low)
+labelSizeValue = f_resolve_label_size(labelSizeInput)
+peakText = str.length(peakLabelTextInput) > 0 ? peakLabelTextInput : "P"
+valleyText = str.length(valleyLabelTextInput) > 0 ? valleyLabelTextInput : "V"
+if barstate.isnew
+    array.push(g_dualOrderResolvedByBar, resolvedNow)
+    array.push(g_dualFirstHighByBar, firstHighNow)
+else
+    int lastIdx = array.size(g_dualOrderResolvedByBar) - 1
+    if lastIdx >= 0
+        array.set(g_dualOrderResolvedByBar, lastIdx, resolvedNow)
+        array.set(g_dualFirstHighByBar, lastIdx, firstHighNow)
+
+if barstate.islast
+    f_build_points()
+
+    int existingLabelCount = array.size(g_labels)
+    if existingLabelCount > 0
+        for i = 0 to existingLabelCount - 1
+            label.delete(array.get(g_labels, i))
+        array.clear(g_labels)
+
+    int pointCount = array.size(g_pointShift)
+    if pointCount > 0
+        int startIndex = math.max(0, pointCount - 500)
+        for i = startIndex to pointCount - 1
+            bool isHigh = array.get(g_pointIsHigh, i)
+            int shift = array.get(g_pointShift, i)
+            float pivotPrice = array.get(g_pointPrice, i)
+            int xTime = time[shift]
+            if not na(xTime)
+                label pointLabel = label.new(
+                     x=xTime,
+                     y=pivotPrice,
+                     xloc=xloc.bar_time,
+                     yloc=isHigh ? yloc.abovebar : yloc.belowbar,
+                     text=isHigh ? peakText : valleyText,
+                     style=label.style_none,
+                     textcolor=isHigh ? peakLabelColorInput : valleyLabelColorInput,
+                     size=labelSizeValue,
+                     force_overlay=true)
+                array.push(g_labels, pointLabel)

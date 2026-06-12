@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "tradeea_live_snapshot_v1.schema.json",
+  "title": "MOHY TradeEA Live Snapshot v1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "artifact_type",
+    "run_id",
+    "written_at",
+    "scanner_cycle",
+    "scope_tag",
+    "config_hash",
+    "runtime_role",
+    "panel_role",
+    "live_ownership_enabled",
+    "symbol",
+    "context_timeframe",
+    "execution_timeframe",
+    "last_scan_time",
+    "last_scan_ok",
+    "primary_bucket",
+    "bucket_reason",
+    "counts",
+    "selected_plan",
+    "ranking",
+    "allocator",
+    "diagnostics",
+    "last_error"
+  ],
+  "properties": {
+    "schema_version": { "const": "tradeea_live_snapshot_v1" },
+    "artifact_type": { "const": "live_snapshot" },
+    "run_id": { "type": "string", "minLength": 1 },
+    "written_at": { "type": "integer" },
+    "scanner_cycle": { "type": "integer", "minimum": 0 },
+    "scope_tag": { "type": "string", "minLength": 1 },
+    "config_hash": { "type": "string", "minLength": 1 },
+    "runtime_role": { "type": "string", "minLength": 1 },
+    "panel_role": { "type": "string", "minLength": 1 },
+    "live_ownership_enabled": { "type": "boolean" },
+    "symbol": { "type": "string", "minLength": 1 },
+    "context_timeframe": { "type": "string", "minLength": 1 },
+    "execution_timeframe": { "type": "string", "minLength": 1 },
+    "last_scan_time": { "type": "integer" },
+    "last_scan_ok": { "type": "boolean" },
+    "publishes_execution_stage_facts": { "type": "boolean" },
+    "primary_bucket": { "type": "string", "minLength": 1 },
+    "bucket_reason": { "type": "string" },
+    "counts": {
+      "type": "object",
+      "required": ["bars", "impulses", "corrections", "continuations", "setup_plans"],
+      "properties": {
+        "bars": { "type": "integer" },
+        "impulses": { "type": "integer" },
+        "corrections": { "type": "integer" },
+        "continuations": { "type": "integer" },
+        "setup_plans": { "type": "integer" }
+      },
+      "additionalProperties": false
+    },
+    "selected_plan": {
+      "type": "object",
+      "required": ["index", "state", "valid", "risk_money", "reward_to_risk", "exposure_pass", "reject_reason"],
+      "properties": {
+        "index": { "type": "integer" },
+        "state": { "type": "string" },
+        "valid": { "type": "boolean" },
+        "setup_key": { "type": "string" },
+        "impulse_id": { "type": "string" },
+        "direction": { "type": "string" },
+        "execution_mode": { "type": "string" },
+        "setup_time": { "type": "integer" },
+        "entry_price": { "type": "number" },
+        "expected_fill_price": { "type": "number" },
+        "required_entry_price": { "type": "number" },
+        "trigger_price": { "type": "number" },
+        "stop_price": { "type": "number" },
+        "target_price": { "type": "number" },
+        "risk_money": { "type": "number" },
+        "reward_to_risk": { "type": "number" },
+        "lots_normalized": { "type": "number" },
+        "exposure_pass": { "type": "boolean" },
+        "reject_reason": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "ranking": {
+      "type": "object",
+      "required": ["order", "bucket_priority", "score", "selection_rank", "plan_setup_time"],
+      "properties": {
+        "order": { "type": "integer" },
+        "bucket_priority": { "type": "integer" },
+        "score": { "type": "number" },
+        "selection_rank": { "type": "integer" },
+        "plan_setup_time": { "type": "integer" }
+      },
+      "additionalProperties": false
+    },
+    "allocator": {
+      "type": "object",
+      "required": ["accepted", "decision", "candidate_risk_percent"],
+      "properties": {
+        "accepted": { "type": "boolean" },
+        "decision": { "type": "string" },
+        "candidate_risk_percent": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "diagnostics": { "type": "string" },
+    "last_error": { "type": "string" }
+  },
+  "additionalProperties": true
+}

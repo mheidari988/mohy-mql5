@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "mohy_snapshot_artifact_v1.schema.json",
+  "title": "MOHY Snapshot Artifact v1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "run_id",
+    "symbol",
+    "timeframe",
+    "candles",
+    "elements",
+    "legs",
+    "swings3",
+    "potential_impulses",
+    "potential_corrections",
+    "potential_continuation_signals"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "run_id": { "type": "string", "minLength": 1 },
+    "symbol": { "type": "string", "minLength": 1 },
+    "timeframe": { "type": "string", "minLength": 1 },
+    "context_timeframe": { "type": "string" },
+    "execution_timeframe": { "type": "string" },
+    "built_at": { "type": "string" },
+    "config_hash": { "type": "string" },
+    "explanation_title": { "type": "string" },
+    "explanation_markdown": { "type": "string" },
+    "explanation_html": { "type": "string" },
+    "explanation_text": { "type": "string" },
+    "explanation": {
+      "type": "object",
+      "required": ["format", "content"],
+      "properties": {
+        "title": { "type": "string" },
+        "format": {
+          "type": "string",
+          "enum": ["markdown", "html", "text"]
+        },
+        "content": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "candles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["shift", "open", "high", "low", "close"],
+        "properties": {
+          "shift": { "type": "integer" },
+          "time": { "type": "string" },
+          "open": { "type": "number" },
+          "high": { "type": "number" },
+          "low": { "type": "number" },
+          "close": { "type": "number" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "elements": { "type": "array", "items": { "type": "object" } },
+    "legs": { "type": "array", "items": { "type": "object" } },
+    "swings3": { "type": "array", "items": { "type": "object" } },
+    "potential_impulses": { "type": "array", "items": { "type": "object" } },
+    "potential_corrections": { "type": "array", "items": { "type": "object" } },
+    "potential_continuation_signals": { "type": "array", "items": { "type": "object" } }
+  },
+  "additionalProperties": true
+}

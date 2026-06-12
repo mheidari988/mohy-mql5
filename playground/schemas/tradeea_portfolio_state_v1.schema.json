@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "tradeea_portfolio_state_v1.schema.json",
+  "title": "MOHY TradeEA Portfolio State v1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "artifact_type",
+    "run_id",
+    "written_at",
+    "scanner_cycle",
+    "scope_tag",
+    "config_hash",
+    "symbol_anchor",
+    "context_timeframe",
+    "execution_timeframe",
+    "runtime_role",
+    "panel_role",
+    "live_ownership_enabled",
+    "summary",
+    "buckets",
+    "allocator",
+    "execution",
+    "scanner_first_error",
+    "top_ranked",
+    "symbols"
+  ],
+  "properties": {
+    "schema_version": { "const": "tradeea_portfolio_state_v1" },
+    "artifact_type": { "const": "portfolio_state" },
+    "run_id": { "type": "string", "minLength": 1 },
+    "written_at": { "type": "integer" },
+    "scanner_cycle": { "type": "integer", "minimum": 0 },
+    "scope_tag": { "type": "string", "minLength": 1 },
+    "config_hash": { "type": "string", "minLength": 1 },
+    "symbol_anchor": { "type": "string", "minLength": 1 },
+    "context_timeframe": { "type": "string", "minLength": 1 },
+    "execution_timeframe": { "type": "string", "minLength": 1 },
+    "runtime_role": { "type": "string", "minLength": 1 },
+    "panel_role": { "type": "string", "minLength": 1 },
+    "live_ownership_enabled": { "type": "boolean" },
+    "summary": {
+      "type": "object",
+      "required": ["symbols_total", "scanned_ok", "scanned_failed", "selected_setups"],
+      "properties": {
+        "symbols_total": { "type": "integer" },
+        "scanned_ok": { "type": "integer" },
+        "scanned_failed": { "type": "integer" },
+        "selected_setups": { "type": "integer" }
+      },
+      "additionalProperties": false
+    },
+    "buckets": {
+      "type": "object",
+      "required": [
+        "confirmed_potential_impulse",
+        "confirmed_impulse_and_confirmed_correction",
+        "confirmed_setup_waiting_entry",
+        "eligible_now",
+        "entered_open_running",
+        "blocked_by_risk_or_exposure",
+        "rejected_or_invalidated"
+      ],
+      "properties": {
+        "confirmed_potential_impulse": { "type": "integer" },
+        "confirmed_impulse_and_confirmed_correction": { "type": "integer" },
+        "confirmed_setup_waiting_entry": { "type": "integer" },
+        "eligible_now": { "type": "integer" },
+        "entered_open_running": { "type": "integer" },
+        "blocked_by_risk_or_exposure": { "type": "integer" },
+        "rejected_or_invalidated": { "type": "integer" }
+      },
+      "additionalProperties": false
+    },
+    "allocator": {
+      "type": "object",
+      "required": [
+        "accepted",
+        "blocked",
+        "open_risk_percent",
+        "total_risk_percent",
+        "max_risk_percent",
+        "exposure_base_value"
+      ],
+      "properties": {
+        "accepted": { "type": "integer" },
+        "blocked": { "type": "integer" },
+        "open_risk_percent": { "type": "number" },
+        "total_risk_percent": { "type": "number" },
+        "max_risk_percent": { "type": "number" },
+        "exposure_base_value": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "execution": {
+      "type": "object",
+      "required": ["attempted", "success", "failed", "first_error_symbol", "first_error"],
+      "properties": {
+        "attempted": { "type": "integer" },
+        "success": { "type": "integer" },
+        "failed": { "type": "integer" },
+        "first_error_symbol": { "type": "string" },
+        "first_error": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "scanner_first_error": {
+      "type": "object",
+      "required": ["symbol", "error"],
+      "properties": {
+        "symbol": { "type": "string" },
+        "error": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "top_ranked": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["rank", "symbol", "bucket", "score"],
+        "properties": {
+          "rank": { "type": "integer" },
+          "symbol": { "type": "string" },
+          "bucket": { "type": "string" },
+          "score": { "type": "number" },
+          "setup_key": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "symbols": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "symbol",
+          "bucket",
+          "bucket_reason",
+          "ranking_order",
+          "ranking_score",
+          "selected_plan_state",
+          "allocator_accepted",
+          "allocator_decision",
+          "last_scan_ok"
+        ],
+        "properties": {
+          "symbol": { "type": "string" },
+          "bucket": { "type": "string" },
+          "bucket_reason": { "type": "string" },
+          "ranking_order": { "type": "integer" },
+          "ranking_score": { "type": "number" },
+          "selected_plan_state": { "type": "string" },
+          "selected_setup_key": { "type": "string" },
+          "selected_impulse_id": { "type": "string" },
+          "selected_entry_price": { "type": "number" },
+          "selected_stop_price": { "type": "number" },
+          "selected_target_price": { "type": "number" },
+          "allocator_accepted": { "type": "boolean" },
+          "allocator_decision": { "type": "string" },
+          "last_scan_ok": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": true
+}

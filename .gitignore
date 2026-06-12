@@ -1,0 +1,36 @@
+# Compiled MetaTrader outputs
+*.ex5
+*.ex4
+
+# MT5 terminal runtime folders
+Logs/
+Tester/
+Profiles/
+Bases/
+MQL5/Logs/
+
+# Generated MOHY runtime/config output
+Files/MOHY/config/effective/
+Files/MOHY/engine_events/
+
+# Generated verification artifacts
+docs/verification/mt5_migration/artifacts/*.log
+docs/verification/potential_impulse/artifacts/*.log
+docs/verification/potential_correction/artifacts/*.log
+docs/verification/determinism/artifacts/*
+!docs/verification/determinism/artifacts/.gitkeep
+
+# Playground generated run artifacts
+playground/artifacts/runs/**
+!playground/artifacts/runs/.gitkeep
+
+# Local scratch and private material
+temp/
+private/
+secrets/
+.env
+.env.*
+*.pem
+*.key
+*.pfx
+*.p12

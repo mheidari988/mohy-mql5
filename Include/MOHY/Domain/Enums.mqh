@@ -1,0 +1,383 @@
+#ifndef __MOHY_DOMAIN_ENUMS_MQH__
+#define __MOHY_DOMAIN_ENUMS_MQH__
+
+enum MohyDirection
+  {
+   MOHY_DIR_NONE = 0,
+   MOHY_DIR_BULL = 1,
+   MOHY_DIR_BEAR = -1
+  };
+
+enum MohyTimeframePair
+  {
+   MOHY_TF_PAIR_H1_M15 = 0,
+   MOHY_TF_PAIR_H4_H1 = 1,
+   MOHY_TF_PAIR_D1_H4 = 2,
+   MOHY_TF_PAIR_H2_M30 = 3
+  };
+
+enum MohyEqualSwingClassificationMode
+  {
+   // Equal highs classify as LH and equal lows classify as LL.
+   MOHY_EQUAL_SWING_CLASSIFY_WEAKER = 0,
+   // Equal highs classify as HH and equal lows classify as HL.
+   MOHY_EQUAL_SWING_CLASSIFY_STRONGER = 1
+  };
+
+enum MohyRetracementModel
+  {
+   MOHY_RETRACE_MODEL_STRENGTH_EFF_BASELINE = 0,
+   MOHY_RETRACE_MODEL_CADENCE_SLOPE = 1,
+   MOHY_RETRACE_MODEL_VOLATILITY_CONTRACTION = 2,
+   MOHY_RETRACE_MODEL_STRUCTURE_STEP = 3,
+   MOHY_RETRACE_MODEL_VOLUME_PROFILE = 4,
+   MOHY_RETRACE_MODEL_HYBRID_SCORE = 5
+  };
+
+enum MohySetupPhase
+  {
+   MOHY_SETUP_IDLE = 0,
+   MOHY_SETUP_H1_CONTEXT_READY = 1,
+   MOHY_SETUP_RETRACEMENT_VALID = 2,
+   MOHY_SETUP_CONTINUATION_CONFIRMED = 3,
+   MOHY_SETUP_WAITING_ENTRY = 4,
+   MOHY_SETUP_ENTERED = 5,
+   MOHY_SETUP_INVALIDATED = 6
+  };
+
+enum MohyTradePhase
+  {
+   MOHY_TRADE_PHASE_NONE = 0,
+   MOHY_TRADE_PHASE_OPENED = 1,
+   MOHY_TRADE_PHASE_BE_ARMED = 2,
+   MOHY_TRADE_PHASE_BE_RISK_FREE = 3,
+   MOHY_TRADE_PHASE_POST_BE_ACTIVE = 4,
+   MOHY_TRADE_PHASE_EXITED = 5
+  };
+
+enum MohyRiskBase
+  {
+   MOHY_RISK_BASE_EQUITY = 0,
+   MOHY_RISK_BASE_BALANCE = 1,
+   MOHY_RISK_BASE_CALCULATED_BALANCE = 2
+  };
+
+enum MohyExposureBase
+  {
+   MOHY_EXPOSURE_BASE_EQUITY = 0,
+   MOHY_EXPOSURE_BASE_BALANCE = 1,
+   MOHY_EXPOSURE_BASE_CALCULATED_BALANCE = 2
+  };
+
+enum MohyRetraceInvalidationMode
+  {
+   MOHY_RETRACE_INVALIDATE_TOUCH = 0,
+   MOHY_RETRACE_INVALIDATE_CLOSE_BEYOND = 1
+  };
+
+enum MohyLevelTriggerMode
+  {
+   MOHY_LEVEL_TRIGGER_TOUCH = 0,
+   MOHY_LEVEL_TRIGGER_CLOSE_BEYOND = 1
+  };
+
+enum MohyPotentialCorrectionMinFibLevel
+  {
+   MOHY_POT_CORR_MIN_FIB_0382 = 0,
+   MOHY_POT_CORR_MIN_FIB_0500 = 1,
+   MOHY_POT_CORR_MIN_FIB_0618 = 2
+  };
+
+enum MohyPotentialCorrectionMaxFibLevel
+  {
+   MOHY_POT_CORR_MAX_FIB_0618 = 0,
+   MOHY_POT_CORR_MAX_FIB_0786 = 1,
+   MOHY_POT_CORR_MAX_FIB_0886 = 2,
+   MOHY_POT_CORR_MAX_FIB_1000 = 3
+  };
+
+enum MohyPotentialCorrectionSupersedeDirectionMode
+  {
+   MOHY_POT_CORR_SUPERSEDE_DIR_ANY = 0,
+   MOHY_POT_CORR_SUPERSEDE_DIR_OPPOSITE_ONLY = 1
+  };
+
+enum MohyPotentialCorrectionSupersedeScope
+  {
+   MOHY_POT_CORR_SUPERSEDE_SCOPE_FORMING_ONLY = 0,
+   MOHY_POT_CORR_SUPERSEDE_SCOPE_FORMING_AND_CONFIRMED = 1
+  };
+
+enum MohyPreEntryInvalidationMode
+  {
+   MOHY_PRE_ENTRY_INVALIDATE_TOUCH = 0,
+   MOHY_PRE_ENTRY_INVALIDATE_CLOSE_BEYOND = 1
+  };
+
+enum MohyEntryExecutionMode
+  {
+   MOHY_ENTRY_VIRTUAL_TRIGGER = 0,
+   MOHY_ENTRY_REAL_PENDING_ORDER = 1
+  };
+
+enum MohyRuntimeRoleMode
+  {
+   MOHY_RUNTIME_ROLE_GLOBAL_LIVE = 0,
+   MOHY_RUNTIME_ROLE_SHADOW_DEBUG = 1,
+   MOHY_RUNTIME_ROLE_READ_ONLY = 2
+  };
+
+enum MohyRecheckMode
+  {
+   MOHY_RECHECK_WAIT_FIXED = 0,
+   MOHY_RECHECK_ADJUST_ON_FAIL = 1,
+   MOHY_RECHECK_ALWAYS_ADJUST = 2
+  };
+
+enum MohyAdjustCadence
+  {
+   MOHY_ADJUST_CADENCE_TICK_WITH_THROTTLE = 0
+  };
+
+enum MohyTouchSide
+  {
+   MOHY_TOUCH_LOW_COST = 0,
+   MOHY_TOUCH_BID = 1,
+   MOHY_TOUCH_ASK = 2
+  };
+
+enum MohySLMode
+  {
+   MOHY_SL_OUTER_CORRECTION_EXTREME = 0,
+   MOHY_SL_INNER_STRUCTURE = 1,
+   MOHY_SL_AUTO = 2
+  };
+
+enum MohyTPMode
+  {
+   MOHY_TP_FIB_NEG_EXTENSION = 0,
+   MOHY_TP_RISK_REWARD = 1
+  };
+
+enum MohyPostBEProfile
+  {
+   MOHY_POST_BE_OFF = 0,
+   MOHY_POST_BE_TRAIL_ONLY = 1,
+   MOHY_POST_BE_PARTIAL_ONLY = 2,
+   MOHY_POST_BE_HYBRID = 3
+  };
+
+enum MohyPostBEStartMode
+  {
+   MOHY_POST_BE_START_IMMEDIATE = 0,
+   MOHY_POST_BE_START_AFTER_BE = 1,
+   MOHY_POST_BE_START_AT_R_MULTIPLE = 2
+  };
+
+enum MohyPostBEStartReason
+  {
+   MOHY_POST_BE_START_REASON_NONE = 0,
+   MOHY_POST_BE_START_REASON_IMMEDIATE = 1,
+   MOHY_POST_BE_START_REASON_AFTER_BREAK_EVEN = 2,
+   MOHY_POST_BE_START_REASON_AT_R_MULTIPLE = 3
+  };
+
+enum MohyImpulseConsumptionReason
+  {
+   MOHY_IMPULSE_CONSUMED_NONE = 0,
+   MOHY_IMPULSE_CONSUMED_ENTERED = 1,
+   MOHY_IMPULSE_CONSUMED_INVALIDATED_PRE_ENTRY = 2,
+   MOHY_IMPULSE_CONSUMED_MANUAL_CANCELLED = 3,
+   MOHY_IMPULSE_CONSUMED_EXITED = 4
+  };
+
+enum MohyTrailModel
+  {
+   MOHY_TRAIL_FIXED_POINTS = 0,
+   MOHY_TRAIL_ATR_BASED = 1,
+   MOHY_TRAIL_STRUCTURE_BASED = 2,
+   MOHY_TRAIL_MA_BASED = 3
+  };
+
+enum MohyTrailUpdateCadence
+  {
+   MOHY_TRAIL_EVERY_TICK = 0,
+   MOHY_TRAIL_LTF_CLOSE = 1,
+   MOHY_TRAIL_HYBRID_INTRABAR = 2
+  };
+
+enum MohyPartialModel
+  {
+   MOHY_PARTIAL_R_MULTIPLE = 0,
+   MOHY_PARTIAL_FIB_LEVELS = 1,
+   MOHY_PARTIAL_SELECTABLE = 2
+  };
+
+enum MohyPartialTargetMode
+  {
+   MOHY_PARTIAL_TARGET_R_MULTIPLE = 0,
+   MOHY_PARTIAL_TARGET_FIB_LEVEL = 1
+  };
+
+enum MohyPostPartialStopAction
+  {
+   MOHY_POST_PARTIAL_KEEP = 0,
+   MOHY_POST_PARTIAL_MOVE_TO_BE_OR_BE_PLUS = 1,
+   MOHY_POST_PARTIAL_MOVE_TO_STRUCTURE = 2,
+   MOHY_POST_PARTIAL_APPLY_TRAIL_NOW = 3
+  };
+
+enum MohyRunnerTargetMode
+  {
+   MOHY_RUNNER_KEEP_EXISTING_TP = 0,
+   MOHY_RUNNER_TRAIL_ONLY = 1
+  };
+
+enum MohyContinuationConfirmLogic
+  {
+   MOHY_CONT_CONFIRM_AND = 0,
+   MOHY_CONT_CONFIRM_OR = 1
+  };
+
+enum MohyContinuationPlanningStartMode
+  {
+   // Start planning only after confirmed correction/swing structure ("P").
+   MOHY_CONT_PLAN_START_CONFIRMED_P_ONLY = 0,
+   // Start planning after provisional or confirmed correction/swing structure ("P*" or "P").
+   MOHY_CONT_PLAN_START_P_OR_P_STAR = 1
+  };
+
+enum MohyExecutionResultCode
+  {
+   MOHY_EXEC_SUCCESS = 0,
+   MOHY_EXEC_BLOCKED_BY_GUARD = 1,
+   MOHY_EXEC_BROKER_REJECT = 2,
+   MOHY_EXEC_RETRYING = 3,
+   MOHY_EXEC_FALLBACK_EXECUTED = 4,
+   MOHY_EXEC_FAILED = 5
+  };
+
+enum MohyRejectReason
+  {
+   MOHY_REJECT_NONE = 0,
+   MOHY_REJECT_NO_VALID_IMPULSE_CONTEXT = 1,
+   MOHY_REJECT_RETRACEMENT_INVALID = 2,
+   MOHY_REJECT_CONTINUATION_NOT_CONFIRMED = 3,
+   MOHY_REJECT_PRE_ENTRY_INVALIDATED = 4,
+   MOHY_REJECT_SPREAD_FILTER_FAILED = 5,
+   MOHY_REJECT_MIN_RR_NOT_SATISFIED = 6,
+   MOHY_REJECT_STOP_DISTANCE_INVALID = 7,
+   MOHY_REJECT_LOT_NORMALIZATION_FAILED = 8,
+   MOHY_REJECT_EXPOSURE_LIMIT_EXCEEDED = 9,
+   MOHY_REJECT_PENDING_PLACEMENT_REJECTED = 10,
+   MOHY_REJECT_EXECUTION_FAILED = 11,
+   MOHY_REJECT_BROKER_CONSTRAINT = 12,
+   MOHY_REJECT_INVALID_PLAN = 13
+  };
+
+enum MohyInvalidationReason
+  {
+   MOHY_INVALIDATION_NONE = 0,
+   MOHY_INVALIDATION_RETRACE_MAX_BREACH = 1,
+   MOHY_INVALIDATION_IMPULSE_ORIGIN_BROKEN = 2,
+   MOHY_INVALIDATION_PRE_ENTRY_IMPULSE_EXTREME = 3,
+   MOHY_INVALIDATION_MANUAL_CANCEL = 4,
+   MOHY_INVALIDATION_SETUP_REPLACED = 5
+  };
+
+enum MohyUiActionId
+  {
+   MOHY_UI_ACTION_NONE = 0,
+   MOHY_UI_ACTION_PAUSE_ENTRIES = 1,
+   MOHY_UI_ACTION_RESUME_ENTRIES = 2,
+   MOHY_UI_ACTION_CANCEL_WAITING_ENTRIES = 3,
+   MOHY_UI_ACTION_CLOSE_STRATEGY_TRADES = 4,
+   MOHY_UI_ACTION_EMERGENCY_FLATTEN = 5
+  };
+
+enum MohyUiAlertEventType
+  {
+   MOHY_UI_ALERT_INFO = 0,
+   MOHY_UI_ALERT_WARNING = 1,
+   MOHY_UI_ALERT_CRITICAL = 2
+  };
+
+enum MohyUiResultCode
+  {
+   MOHY_UI_RESULT_SUCCESS = 0,
+   MOHY_UI_RESULT_BLOCKED_BY_GUARD = 1,
+   MOHY_UI_RESULT_DENIED_BY_AUTHORITY = 2,
+   MOHY_UI_RESULT_COOLDOWN_ACTIVE = 3,
+   MOHY_UI_RESULT_CONFIRMATION_EXPIRED = 4,
+   MOHY_UI_RESULT_BROKER_REJECT = 5,
+   MOHY_UI_RESULT_RETRYING = 6,
+   MOHY_UI_RESULT_FALLBACK_EXECUTED = 7,
+   MOHY_UI_RESULT_FAILED = 8
+  };
+
+enum MohyEngineEventType
+  {
+   MOHY_ENGINE_EVENT_NONE = 0,
+   MOHY_ENGINE_EVENT_IMPULSE_DETECTED = 1,
+   MOHY_ENGINE_EVENT_RETRACEMENT_VALID = 2,
+   MOHY_ENGINE_EVENT_CONTINUATION_CONFIRMED = 3,
+   MOHY_ENGINE_EVENT_PLAN_REJECTED = 4,
+   MOHY_ENGINE_EVENT_WAITING_STARTED = 5,
+   MOHY_ENGINE_EVENT_TRIGGER_ADJUSTED = 6,
+   MOHY_ENGINE_EVENT_INVALIDATION = 7,
+   MOHY_ENGINE_EVENT_ENTRY_EXECUTED = 8,
+   MOHY_ENGINE_EVENT_BREAK_EVEN_ACTIVATED = 9,
+   MOHY_ENGINE_EVENT_TRAILING_UPDATED = 10,
+   MOHY_ENGINE_EVENT_PARTIAL_EXECUTED = 11,
+   MOHY_ENGINE_EVENT_EXIT_RESOLVED = 12
+  };
+
+enum MohyRuntimeLifecycleState
+  {
+   MOHY_RUNTIME_LIFECYCLE_NONE = 0,
+   MOHY_RUNTIME_LIFECYCLE_WAITING = 1,
+   MOHY_RUNTIME_LIFECYCLE_OPEN = 2,
+   MOHY_RUNTIME_LIFECYCLE_RESOLVED = 3
+  };
+
+string MohyRecheckModeToString(const MohyRecheckMode value)
+  {
+   if(value == MOHY_RECHECK_WAIT_FIXED)
+      return "WaitFixed";
+   if(value == MOHY_RECHECK_ADJUST_ON_FAIL)
+      return "AdjustOnFail";
+   if(value == MOHY_RECHECK_ALWAYS_ADJUST)
+      return "AlwaysAdjust";
+   return "Unknown";
+  }
+
+string MohyAdjustCadenceToString(const MohyAdjustCadence value)
+  {
+   if(value == MOHY_ADJUST_CADENCE_TICK_WITH_THROTTLE)
+      return "TickWithThrottle";
+   return "Unknown";
+  }
+
+string MohyTouchSideToString(const MohyTouchSide value)
+  {
+   if(value == MOHY_TOUCH_LOW_COST)
+      return "LowCost";
+   if(value == MOHY_TOUCH_BID)
+      return "Bid";
+   if(value == MOHY_TOUCH_ASK)
+      return "Ask";
+   return "Unknown";
+  }
+
+string MohyRuntimeRoleModeToString(const MohyRuntimeRoleMode value)
+  {
+   if(value == MOHY_RUNTIME_ROLE_GLOBAL_LIVE)
+      return "GlobalLive";
+   if(value == MOHY_RUNTIME_ROLE_SHADOW_DEBUG)
+      return "ShadowDebug";
+   if(value == MOHY_RUNTIME_ROLE_READ_ONLY)
+      return "ReadOnly";
+   return "Unknown";
+  }
+
+#endif

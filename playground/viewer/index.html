@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MOHY Playground Viewer</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="layout">
+    <section class="controls panel">
+      <h1>MOHY Playground Viewer</h1>
+      <p class="sub">Visual discussion and debug viewer for kernel artifacts.</p>
+
+      <div class="field">
+        <label for="exampleSelect">Built-in example</label>
+        <select id="exampleSelect"></select>
+        <button id="loadExampleBtn" type="button">Load Example</button>
+      </div>
+
+      <div class="field">
+        <label for="themeSelect">Theme</label>
+        <select id="themeSelect">
+          <option value="system">System</option>
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="artifactFile">Load JSON artifact</label>
+        <input id="artifactFile" type="file" accept="application/json,.json" />
+      </div>
+
+      <div class="field">
+        <label for="explainFile">Load assistant explanation override</label>
+        <input id="explainFile" type="file" accept=".md,.markdown,.txt,.html,.htm,text/plain,text/markdown,text/html" />
+        <button id="clearExplainBtn" type="button">Use Artifact Explanation</button>
+      </div>
+
+      <div class="field two-cols">
+        <label><input id="layerCandles" type="checkbox" checked /> Candles</label>
+        <label><input id="layerElements" type="checkbox" checked /> Elements</label>
+        <label><input id="layerLegs" type="checkbox" checked /> Legs</label>
+        <label><input id="layerSwing3" type="checkbox" checked /> Swing3</label>
+        <label><input id="layerImpulse" type="checkbox" checked /> Potential Impulse</label>
+        <label><input id="layerCorrection" type="checkbox" checked /> Potential Correction</label>
+        <label><input id="layerContinuation" type="checkbox" /> Continuation Confirmations</label>
+        <label><input id="layerTradeSetup" type="checkbox" checked /> Trade Setup Plans</label>
+      </div>
+
+      <div class="field">
+        <button id="fitBtn" type="button">Fit Chart</button>
+      </div>
+
+      <pre id="meta"></pre>
+      <pre id="summary"></pre>
+      <p class="note">Tip: keep this viewer open while we generate new artifacts in <code>playground/artifacts/runs</code>.</p>
+    </section>
+
+    <section class="chart panel">
+      <canvas id="chartCanvas" width="1400" height="760"></canvas>
+      <section class="assistant-note">
+        <div class="assistant-note-head">
+          <h2 id="explainTitle">Assistant Explanation</h2>
+          <span id="explainSource" class="assistant-note-source">Source: artifact</span>
+        </div>
+        <div id="explainContent" class="assistant-note-body"></div>
+      </section>
+    </section>
+  </main>
+  <script src="./app.js"></script>
+</body>
+</html>

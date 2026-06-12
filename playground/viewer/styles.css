@@ -1,0 +1,238 @@
+:root {
+  --bg: #f1f5f9;
+  --bg-top: #f8fafc;
+  --bg-bottom: #eef2ff;
+  --panel: #ffffff;
+  --text: #0f172a;
+  --muted: #475569;
+  --line: #cbd5e1;
+  --accent: #1d4ed8;
+  --field-bg: #ffffff;
+  --button-bg: #f8fafc;
+  --pre-bg: #f8fafc;
+  --pre-line: #dbe5f1;
+  --canvas-border: #dbe5f1;
+  --assistant-bg: #f8fafc;
+  --inline-code-bg: #e2e8f0;
+  --block-code-bg: #0f172a;
+  --block-code-line: #1e293b;
+  --block-code-text: #e2e8f0;
+}
+
+[data-theme="dark"] {
+  --bg: #020617;
+  --bg-top: #0b1220;
+  --bg-bottom: #111827;
+  --panel: #0f172a;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --line: #334155;
+  --accent: #60a5fa;
+  --field-bg: #111827;
+  --button-bg: #1e293b;
+  --pre-bg: #0b1220;
+  --pre-line: #1e293b;
+  --canvas-border: #334155;
+  --assistant-bg: #0b1220;
+  --inline-code-bg: #1e293b;
+  --block-code-bg: #020617;
+  --block-code-line: #1e293b;
+  --block-code-text: #e2e8f0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
+  color: var(--text);
+  font-family: Segoe UI, Arial, sans-serif;
+}
+
+.layout {
+  max-width: 1700px;
+  margin: 0 auto;
+  padding: 16px;
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 1200px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+}
+
+.controls {
+  padding: 14px;
+}
+
+.controls h1 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.sub {
+  margin: 6px 0 14px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.field {
+  margin-bottom: 12px;
+}
+
+.field label {
+  display: block;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.field input[type="file"],
+.field select,
+.field button {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px;
+  background: var(--field-bg);
+  color: var(--text);
+}
+
+.field button {
+  margin-top: 6px;
+  cursor: pointer;
+  background: var(--button-bg);
+}
+
+.field button:hover {
+  border-color: var(--accent);
+}
+
+.two-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 10px;
+}
+
+.two-cols label {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text);
+}
+
+pre {
+  margin: 10px 0 0;
+  padding: 10px;
+  border-radius: 8px;
+  background: var(--pre-bg);
+  border: 1px solid var(--pre-line);
+  font-size: 12px;
+  line-height: 1.35;
+  white-space: pre-wrap;
+}
+
+.note {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.chart {
+  padding: 10px;
+  overflow: auto;
+}
+
+canvas {
+  width: 100%;
+  min-height: 620px;
+  border-radius: 10px;
+  border: 1px solid var(--canvas-border);
+  background: var(--field-bg);
+}
+
+.assistant-note {
+  margin-top: 12px;
+  border: 1px solid var(--pre-line);
+  border-radius: 10px;
+  background: var(--assistant-bg);
+  padding: 12px;
+}
+
+.assistant-note-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.assistant-note-head h2 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.assistant-note-source {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.assistant-note-body {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.assistant-note-body p {
+  margin: 0 0 10px;
+}
+
+.assistant-note-body h1,
+.assistant-note-body h2,
+.assistant-note-body h3,
+.assistant-note-body h4,
+.assistant-note-body h5,
+.assistant-note-body h6 {
+  margin: 12px 0 8px;
+}
+
+.assistant-note-body ul,
+.assistant-note-body ol {
+  margin: 0 0 10px 22px;
+  padding: 0;
+}
+
+.assistant-note-body li {
+  margin: 4px 0;
+}
+
+.assistant-note-body code {
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 12px;
+  background: var(--inline-code-bg);
+  padding: 1px 4px;
+  border-radius: 4px;
+}
+
+.assistant-note-body pre {
+  margin: 0 0 10px;
+  padding: 10px;
+  border-radius: 8px;
+  background: var(--block-code-bg);
+  border: 1px solid var(--block-code-line);
+  color: var(--block-code-text);
+  font-size: 12px;
+  line-height: 1.4;
+  white-space: pre-wrap;
+}

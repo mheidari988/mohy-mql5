@@ -1,0 +1,62 @@
+<mxfile host="app.diagrams.net" modified="2026-03-24T12:00:00.000Z" agent="Codex GPT-5" version="26.0.11" editor="www.draw.io">
+  <diagram id="mohy-system-design-quick-read" name="MOHY System Design">
+    <mxGraphModel dx="1800" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2000" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="2" value="&lt;b&gt;MOHY System Design (Active Runtime)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=22;fontStyle=1;align=center;verticalAlign=middle;fillColor=#0D47A1;fontColor=#FFFFFF;strokeColor=#0D47A1;" vertex="1" parent="1">
+          <mxGeometry x="320" y="20" width="1060" height="48" as="geometry" />
+        </mxCell>
+
+        <mxCell id="3" value="Active path is Domain Contracts + Core Kernel + Runtime Layer + MOHY_Visualizer + MOHY_DebugEA + MOHY_TradeEA. Strategy behavior authority remains docs/strategy.md." style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=center;verticalAlign=middle;fillColor=#E3F2FD;strokeColor=#90CAF9;" vertex="1" parent="1">
+          <mxGeometry x="320" y="74" width="1060" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="10" value="&lt;b&gt;4) Read-only Visualization Host&lt;/b&gt;&lt;br/&gt;Indicators/MOHY_Visualizer.mq5&lt;br/&gt;- Validates HTF/LTF pair&lt;br/&gt;- Maps input controls to shared detection config&lt;br/&gt;- Builds tick snapshots (confirmed + provisional, runtime lock ON)&lt;br/&gt;- Uses kernel correction recency/timeline + continuation/setup-history facts&lt;br/&gt;- Uses shared core SnapshotSelectors for lineage/index joins&lt;br/&gt;- Does not treat continuation broken levels as final executable entries&lt;br/&gt;- Renders status/ribbon/impulse/correction/continuation/setup history" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;align=left;verticalAlign=top;spacing=10;fillColor=#FFF8E1;strokeColor=#F9A825;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="320" y="140" width="510" height="200" as="geometry" />
+        </mxCell>
+
+<mxCell id="11" value="&lt;b&gt;2) Core Price-Action Kernel&lt;/b&gt;&lt;br/&gt;Include/MOHY/Core/PriceActionKernel.mqh&lt;br/&gt;Core domain contracts/enums + selectors + builders + classifier:&lt;br/&gt;- SnapshotSelectors (shared lineage/index selection)&lt;br/&gt;- ElementBuilder, LegBuilder, Swing3Builder&lt;br/&gt;- PotentialImpulseBuilder, PotentialCorrectionBuilder, PotentialContinuationBuilder&lt;br/&gt;- TradeSetupPlanner, TradeSetupPlanBuilder, HistoricalTradeSetupBuilder&lt;br/&gt;- Continuation = structural confirmation only&lt;br/&gt;- Next publication stages: TradeSetupPlan + HistoricalTradeSetup&lt;br/&gt;- Correction/continuation/setup selection + timeline segment facts&lt;br/&gt;- Snapshot publication lock: provisional-latest always ON&lt;br/&gt;- Swing3PatternClassifier&lt;br/&gt;- TerminalSeries compatibility wrapper" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;align=left;verticalAlign=top;spacing=10;fillColor=#FFF3E0;strokeColor=#EF6C00;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="320" y="390" width="1060" height="190" as="geometry" />
+        </mxCell>
+
+        <mxCell id="12" value="&lt;b&gt;1) Domain Contracts + Shared Config (Bottom)&lt;/b&gt;&lt;br/&gt;Include/MOHY/Domain/Enums.mqh&lt;br/&gt;Include/MOHY/Domain/Config.mqh&lt;br/&gt;Include/MOHY/Domain/Contracts.mqh&lt;br/&gt;Include/MOHY/Domain/StateIds.mqh&lt;br/&gt;- Deterministic defaults + timeframe invariants" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;align=left;verticalAlign=top;spacing=10;fillColor=#E3F2FD;strokeColor=#1565C0;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="320" y="620" width="1060" height="170" as="geometry" />
+        </mxCell>
+
+        <mxCell id="13" value="&lt;b&gt;3) Phase-five Runtime + Execution Hosts&lt;/b&gt;&lt;br/&gt;Include/MOHY/Runtime/* + Experts/MOHY_DebugEA.mq5 + Experts/MOHY_TradeEA.mq5&lt;br/&gt;- Runtime roles: GlobalLive (authoritative), ShadowDebug, ReadOnly&lt;br/&gt;- Builds execution-timeframe snapshots only&lt;br/&gt;- Consumes kernel-selected TradeSetupPlan only (no consumer reselection)&lt;br/&gt;- P2: MOHY_TradeEA runs OnTimer scanner cycles in shadow mode over configurable universe (MarketWatchAll default, ChartSymbolOnly optional)&lt;br/&gt;- P3: one primary bucket per symbol (CPI/CIC/Waiting/Eligible/Open/Blocked/Rejected)&lt;br/&gt;- P4: deterministic ranking + fixed tie-break + top-N diagnostics&lt;br/&gt;- P5: allocator caps (active-trade + concurrent-risk) with deterministic block reasons&lt;br/&gt;- P6: optional live ownership dispatches allocator-accepted actionable symbols via per-symbol GlobalLive runtime cycles&lt;br/&gt;- P6 guard: EnableLiveExecutionOwnership + RuntimeRoleMode=GlobalLive + scanner ON + allocator ON&lt;br/&gt;- P6 safety: chart-attached runtime forced to ReadOnly during global dispatch&lt;br/&gt;- P7: artifact bus writes live_snapshot_&lt;symbol&gt;.json + portfolio_state.json for screenshot-free inspection (includes scan-universe mode metadata)&lt;br/&gt;- P8: global panel adds bucket/allocator/execution dashboards + top-rank rows&lt;br/&gt;- P8: when global panel is ON, TradeEA clears/disables legacy runtime panel on that chart&lt;br/&gt;- P8: portfolio actions (Pause/Resume/Cancel/Close/Flatten) use staged confirm/cooldown + UI audit&lt;br/&gt;- P8: dispatch suppresses per-symbol alert/audit fan-out; portfolio scope remains authoritative&lt;br/&gt;- Stable impulse_id/setup_key ownership&lt;br/&gt;- Consumed-impulse ledger + waiting-state persistence + open-position rebinding&lt;br/&gt;- Persists/reloads break-even + post-BE context for recovered open trades&lt;br/&gt;- Publishes lifecycle_state + lifecycle_events artifacts keyed by runtime_setup_key&lt;br/&gt;- Panel: status + confirmation/cooldown + Pause/Resume + Cancel/Close/Flatten + management visibility&lt;br/&gt;- Supports VirtualTrigger and RealPendingOrder orchestration&lt;br/&gt;- Break-even + trailing/partial/hybrid routing with runner behavior&lt;br/&gt;- UI audit trail + terminal alerts + engine-event logging" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;align=left;verticalAlign=top;spacing=10;fillColor=#E8F5E9;strokeColor=#2E7D32;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="870" y="140" width="510" height="200" as="geometry" />
+        </mxCell>
+
+        <mxCell id="20" value="&lt;b&gt;Excluded From Active Runtime&lt;/b&gt;&lt;br/&gt;- Experts/MOHY_EA.mq4&lt;br/&gt;- Indicators/MOHY_PivotsLegs.mq4&lt;br/&gt;- Indicators/MOHY_HtfImpulseQualified.mq4&lt;br/&gt;- helper-tools/ConfigStudio/*&lt;br/&gt;- helper-tools/ToolLauncher/*&lt;br/&gt;- External notification channels beyond terminal alerts" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=left;verticalAlign=top;spacing=10;fillColor=#FAFAFA;strokeColor=#90A4AE;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="1440" y="160" width="420" height="220" as="geometry" />
+        </mxCell>
+
+        <mxCell id="21" value="&lt;b&gt;Active Docs Contract&lt;/b&gt;&lt;br/&gt;1) Strategy behavior: docs/strategy.md&lt;br/&gt;2) Layer/runtime ownership: docs/architecture.md&lt;br/&gt;3) UI/control plane: docs/ui-spec.md when touched&lt;br/&gt;4) Workflow + roadmap: docs/development_operating_model.md&lt;br/&gt;5) Verification commands: docs/backtesting.md when needed&lt;br/&gt;&lt;br/&gt;Default: inspect code first, then read only relevant doc sections. No active phase ledgers." style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=left;verticalAlign=top;spacing=10;fillColor=#FAFAFA;strokeColor=#90A4AE;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="1440" y="420" width="420" height="260" as="geometry" />
+        </mxCell>
+
+        <mxCell id="22" value="&lt;b&gt;Determinism Verification Bundle&lt;/b&gt;&lt;br/&gt;- KernelSnapshotDeterminismVerifier&lt;br/&gt;- PotentialImpulseMatrixVerifier&lt;br/&gt;- PotentialCorrectionMatrixVerifier&lt;br/&gt;- tools/verification/run_determinism_bundle.ps1&lt;br/&gt;- Summary: docs/verification/determinism/artifacts/determinism_bundle_summary.md" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;align=left;verticalAlign=top;spacing=10;fillColor=#E8F5E9;strokeColor=#43A047;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="1440" y="720" width="420" height="220" as="geometry" />
+        </mxCell>
+
+        <mxCell id="30" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#1565C0;" edge="1" parent="1" source="12" target="11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="31" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#1565C0;" edge="1" parent="1" source="11" target="10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="33" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#1565C0;" edge="1" parent="1" source="11" target="13">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="32" value="shared config mapping" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#455A64;fontSize=11;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="12" target="10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
