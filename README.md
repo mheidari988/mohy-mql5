@@ -34,6 +34,8 @@ Do not commit broker credentials, account history, terminal logs, compiled outpu
 
 Checked-in configs, presets, docs, and verification fixtures are intended to be sample/reference material. Real terminal accounts, broker credentials, logs, account history, compiled `.ex5` outputs, and private research results should stay outside this repository.
 
+Server deployment docs, private operational runbooks, production environment values, and private research datasets are intentionally outside this public repository. Use this repo for MT5/MQL source and reviewed sample/reference material only.
+
 ## License
 
 This repository is released under the MIT License. See `LICENSE`.
